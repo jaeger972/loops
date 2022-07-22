@@ -927,7 +927,7 @@ Action.MageLessons = new Action("Mage Lessons", {
     },
     skills: {
         Magic() {
-            return 100 * (1 + getSkillLevel("Alchemy") / 100);
+            return 100 * (Math.pow(1.01/ getSkillLevel("Alchemy") );
         }
     },
     manaCost() {
@@ -1056,6 +1056,7 @@ Action.FightMonsters = new MultipartAction("Fight Monsters", {
     },
     segmentFinished() {
         addResource("gold", 20);
+        handleSkillExp(this.skills);
     },
     getPartName() {
         const monster = Math.floor(towns[0].FightLoopCounter / 3 + 0.0000001);
@@ -1072,7 +1073,6 @@ Action.FightMonsters = new MultipartAction("Fight Monsters", {
         return getSkillLevel("Combat") >= 10;
     },
     finish() {
-        handleSkillExp(this.skills);
     },
 });
 // lazily loaded to allow localization code to load first
