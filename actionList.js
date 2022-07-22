@@ -5848,6 +5848,7 @@ Action.ImbueSoul = new MultipartAction("Imbue Soul", {
         buffs["Imbuement2"].amt = 0;
         trainingLimits = 10;
         addBuffAmt("Imbuement3", 1);
+        capAllTraining()
         view.updateBuffs();
         view.updateStats();
         view.updateSoulstones();
