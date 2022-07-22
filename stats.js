@@ -98,7 +98,7 @@ function getSkillBonus(skill) {
     else if (skill === "Practical" || skill === "Spatiomancy" || skill === "Commune" || skill === "Gluttony") change = "decrease";
     else console.log("Skill not found:" + skill);
 
-    if(change == "increase") return Math.pow(1 + getSkillLevel(skill) / 60, 0.25);
+    if(change == "increase") return 1 + Math.pow(getSkillLevel(skill) / 100, 0.5);
     else if (change == "decrease") return 1 / (1 + getSkillLevel(skill) / 100);
     else return 0;
 }
