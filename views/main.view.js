@@ -1,10 +1,14 @@
 "use strict";
 
+let screenSize;
+
 function View() {
     this.initalize = function() {
+        this.createTravelMenu();
         this.createStats();
         this.updateStats();
         this.updateSkills();
+        this.adjustDarkRitualText();
         this.updateBuffs();
         this.updateTime();
         this.updateNextActions();
@@ -25,11 +29,13 @@ function View() {
         this.updateTeamCombat();
         this.updateLoadoutNames();
         this.updateResources();
+        this.updateTrials();
         setInterval(() => {
             view.updateStories();
             view.updateLockedHidden();
         }, 2000);
         adjustAll();
+        this.updateActionTooltips();
     };
 
     this.statLocs = [
@@ -92,6 +98,11 @@ function View() {
         }
 
         statContainer.innerHTML = totalStatDiv;
+
+        if (options.statColors)
+            Array.from(document.getElementsByClassName("statLevelBar")).forEach((div, index) => {
+                addStatColors(div, statList[index]);
+            });
     };
 
     // requests are properties, where the key is the function name,
@@ -129,6 +140,20 @@ function View() {
         if (this.updateStatGraphNeeded) statGraph.update();
         this.updateTime();
     };
+
+
+    this.adjustTooltipPosition = function(tooltipDiv) {
+        let parent = tooltipDiv.parentNode;
+        let y = parent.getBoundingClientRect().y;
+        let windowHeight = window.innerHeight;
+        let windowScrollY = window.scrollY;
+        let border = (windowHeight / 2) + windowScrollY;
+        if (y > border) {
+            tooltipDiv.classList.add("showthisOver");
+        } else {
+            tooltipDiv.classList.remove("showthisOver");
+        }
+    }
 
     this.showStat = function(stat) {
         statShowing = stat;
@@ -180,7 +205,8 @@ function View() {
             document.getElementById(`skill${skill}Container`).style.display = "none";
             return;
         }
-        document.getElementById(`skill${skill}Container`).style.display = "inline-block";
+        let container = document.getElementById(`skill${skill}Container`);
+        container.style.display = "inline-block";
         if (skill === "Combat" || skill === "Pyromancy" || skill === "Restoration") {
             this.updateTeamCombat();
         }
@@ -196,17 +222,30 @@ function View() {
             document.getElementById(`skill${skill}LevelProgress`).textContent = intToString(levelPrc, 2);
 
             if (skill === "Dark") {
-                document.getElementById("skillBonusDark").textContent = intToString(Math.pow(1 + getSkillLevel("Dark") / 60, 0.25), 4);
+                document.getElementById("skillBonusDark").textContent = intToString(getSkillBonus("Dark"), 4);
             } else if (skill === "Chronomancy") {
-                document.getElementById("skillBonusChronomancy").textContent = intToString(Math.pow(1 + getSkillLevel("Chronomancy") / 60, 0.25), 4);
+                document.getElementById("skillBonusChronomancy").textContent = intToString(getSkillBonus("Chronomancy"), 4);
             } else if (skill === "Practical") {
-                document.getElementById("skillBonusPractical").textContent = (1 / (1 + getSkillLevel("Practical") / 100)).toFixed(3).replace(/(\.\d*?[1-9])0+$/gu, "$1");
+                document.getElementById("skillBonusPractical").textContent = getSkillBonus("Practical").toFixed(3).replace(/(\.\d*?[1-9])0+$/gu, "$1");
             } else if (skill === "Mercantilism") {
-                document.getElementById("skillBonusMercantilism").textContent = intToString(Math.pow(1 + getSkillLevel("Mercantilism") / 60, 0.25), 4);
+                document.getElementById("skillBonusMercantilism").textContent = intToString(getSkillBonus("Mercantilism"), 4);
             } else if (skill === "Spatiomancy") {
-                document.getElementById("skillBonusSpatiomancy").textContent = (1 / (1 + getSkillLevel("Spatiomancy") / 100)).toFixed(3).replace(/(\.\d*?[1-9])0+$/gu, "$1");
+                document.getElementById("skillBonusSpatiomancy").textContent = getSkillBonus("Spatiomancy").toFixed(3).replace(/(\.\d*?[1-9])0+$/gu, "$1");
+            } else if (skill === "Divine") {
+                document.getElementById("skillBonusDivine").textContent = intToString(getSkillBonus("Divine"), 4);
+            } else if (skill === "Commune") {
+                document.getElementById("skillBonusCommune").textContent = getSkillBonus("Commune").toFixed(3).replace(/(\.\d*?[1-9])0+$/gu, "$1");
+            } else if (skill === "Wunderkind") {
+                document.getElementById("skillBonusWunderkind").textContent = intToString(getSkillBonus("Wunderkind"), 4);
+            }else if (skill === "Gluttony") {
+                document.getElementById("skillBonusGluttony").textContent = getSkillBonus("Gluttony").toFixed(3).replace(/(\.\d*?[1-9])0+$/gu, "$1");
+            } else if (skill === "Thievery") {
+                document.getElementById("skillBonusThievery").textContent = intToString(getSkillBonus("Thievery"), 4);
+            } else if (skill === "Leadership") {
+                document.getElementById("skillBonusLeadership").textContent = intToString(getSkillBonus("Leadership"), 4);
             }
         }
+        this.adjustTooltipPosition(container.querySelector("div.showthis"));
     };
 
     this.updateSkills = function() {
@@ -215,16 +254,23 @@ function View() {
         }
     };
 
+    this.showBuff = function(buff) {
+        buffShowing = buff;
+        if (buff !== undefined) this.updateBuff(buff);
+    };
+
     this.updateBuff = function(buff) {
         if (buffs[buff].amt === 0) {
             document.getElementById(`buff${buff}Container`).style.display = "none";
             return;
         }
-        document.getElementById(`buff${buff}Container`).style.display = "flex";
+        let container = document.getElementById(`buff${buff}Container`);
+        container.style.display = "flex";
         document.getElementById(`buff${buff}Level`).textContent = `${getBuffLevel(buff)}/`;
         if (buff === "Imbuement") {
             this.updateTrainingLimits();
         }
+        this.adjustTooltipPosition(container.querySelector("div.showthis"));
     };
 
     this.updateBuffs = function() {
@@ -239,6 +285,7 @@ function View() {
     };
     this.updateTotalTicks = function() {
         document.getElementById("totalTicks").textContent = `${formatNumber(actions.completedTicks)} | ${formatTime(timeCounter)}`;
+        document.getElementById("effectiveTime").textContent = `${formatTime(effectiveTime)}`;
     };
     this.updateResource = function(resource) {
         if (resource !== "gold") document.getElementById(`${resource}Div`).style.display = resources[resource] ? "inline-block" : "none";
@@ -250,9 +297,19 @@ function View() {
     };
     this.updateResources = function() {
         for (const resource in resources) this.updateResource(resource);
+        this.updateActionTooltips();
+    };
+    this.updateActionTooltips = function() {
         document.getElementById("goldInvested").textContent = intToStringRound(goldInvested);
         document.getElementById("bankInterest").textContent = intToStringRound(goldInvested * .001);
-    };
+        document.getElementById("actionAllowedPockets").textContent = intToStringRound(towns[7].totalPockets);
+        document.getElementById("actionAllowedWarehouses").textContent = intToStringRound(towns[7].totalWarehouses);
+        document.getElementById("actionAllowedInsurance").textContent = intToStringRound(towns[7].totalInsurance);
+        document.getElementById("totalSurveyProgress").textContent = getExploreProgress();
+        Array.from(document.getElementsByClassName("surveySkill")).forEach(div => {
+            div.textContent = getExploreSkill();
+        });
+    }
     this.updateTeamCombat = function() {
         if (towns[2].unlocked) {
             document.getElementById("skillSCombatContainer").style.display = "inline-block";
@@ -265,15 +322,15 @@ function View() {
         }
     };
     this.zoneTints = [
-        "rgba(255, 152, 0, 0.2)",
-        "rgba(76, 175, 80, 0.2)",
-        "rgba(255, 235, 59, 0.2)",
-        "rgba(96, 125, 139, 0.2)",
-        "rgba(255, 255, 255, 0.2)",
-        "rgba(103, 58, 183, 0.2)",
-        "rgba(76, 175, 80, 0.4)",
-        "rgba(255, 0, 0, 0.2)",
-        "rgba(103, 58, 183, 0.2)",
+        "rgba(255, 152, 0, 0.2)", //Beginnersville
+        "rgba(76, 175, 80, 0.2)", //Forest Path
+        "rgba(255, 235, 59, 0.2)", //Merchanton
+        "rgba(96, 125, 139, 0.2)", //Mt Olympus
+        "rgba(255, 255, 255, 0.2)", //Valhalla
+        "rgba(103, 58, 183, 0.2)", //Startington
+        "rgba(76, 175, 80, 0.4)", //Jungle Path
+        "rgba(255, 235, 59, 0.4)", //Commerceville
+        "rgba(103, 58, 183, 0.4)", //Valley of Olympus
         //"rgba(103, 58, 183, 0.2)"
     ];
     this.updateNextActions = function() {
@@ -353,7 +410,7 @@ function View() {
             } else if (action.name === "Open Rift") {
                 color = "linear-gradient(to bottom, rgb(255, 152, 0, 0.2) 49%, rgba(103, 58, 183, 0.2) 51%)";
             } else {
-                color = travelNum > 0 ? `linear-gradient(${this.zoneTints[townNum]} 49%, ${this.zoneTints[townNum + travelNum]} 51%)` : this.zoneTints[townNum];
+                color = (travelNum > 0 || travelNum == -5) ? `linear-gradient(${this.zoneTints[townNum]} 49%, ${this.zoneTints[townNum + travelNum]} 51%)` : this.zoneTints[townNum];
             }
             totalDivText +=
                 `<div
@@ -681,7 +738,7 @@ function View() {
     };
 
     this.updateLoadout = function(num) {
-        for (let i = 0; i < 6; i++) {
+        for (let i = 0; i < 16; i++) {
             const elem = document.getElementById(`load${i}`);
             if (elem) {
                 addClassToDiv(elem, "unused");
@@ -694,8 +751,8 @@ function View() {
     };
 
     this.updateLoadoutNames = function() {
-        for (let i = 0; i < 5; i++) {
-            document.getElementById(`load${i + 1}name`).textContent = loadoutnames[i];
+        for (let i = 0; i < loadoutnames.length; i++) {
+            document.getElementById(`load${i + 1}`).textContent = loadoutnames[i];
         }
     };
 
@@ -771,6 +828,8 @@ function View() {
                 ondragstart='handleDirectActionDragStart(event, "${action.name}", ${action.townNum}, "${action.varName}", false)'
                 ondragend='handleDirectActionDragEnd("${action.varName}")'
                 onclick='addActionToList("${action.name}", ${action.townNum})'
+                onmouseover='view.updateAction("${action.varName}")'
+                onmouseout='view.updateAction(undefined)'
             >
                 ${action.label}<br>
                 <div style='position:relative'>
@@ -783,7 +842,7 @@ function View() {
                     ${actionSkills}
                     ${actionStats}
                     <div class='bold'>${_txt("actions>tooltip>mana_cost")}:</div> <div id='manaCost${action.varName}'>${formatNumber(action.manaCost())}</div><br>
-                    <div class='bold'>${_txt("actions>tooltip>exp_multiplier")}:</div> ${action.expMult * 100}%<br>
+                    <div class='bold'>${_txt("actions>tooltip>exp_multiplier")}:</div><div id='expMult${action.varName}'>${action.expMult * 100}</div>%<br>
                 </div>
             </div>`;
 
@@ -829,9 +888,20 @@ function View() {
         }
     };
 
+    this.updateAction = function(action) {
+        if (action === undefined) return
+        let container = document.getElementById(`container${action}`);
+        this.adjustTooltipPosition(container.querySelector("div.showthis"));
+    }
+
     this.adjustManaCost = function(actionName) {
         const action = translateClassNames(actionName);
         document.getElementById(`manaCost${action.varName}`).textContent = formatNumber(action.manaCost());
+    };
+
+    this.adjustExpMult = function(actionName) {
+        const action = translateClassNames(actionName);
+        document.getElementById(`expMult${action.varName}`).textContent = formatNumber(action.expMult * 100);
     };
 
     this.adjustGoldCost = function(varName, amount) {
@@ -971,6 +1041,30 @@ function View() {
         }
     };
 
+    this.updateTrials = function() {
+        for(let i = 0; i < trials.length; i++)
+        {
+            this.updateTrialInfo(i,0);
+        }
+    };
+
+    this.updateTrialInfo = function(trialNum, curFloor) {
+        const trial = trials[trialNum];
+            document.getElementById(`trial${trialNum}HighestFloor`).textContent = trial.highestFloor + 1;
+            if (curFloor >= trial.length) {
+                document.getElementById(`trial${trialNum}CurFloor`).textContent = "";
+                document.getElementById(`trial${trialNum}CurFloorCompleted`).textContent = "";
+            }
+            else {
+                document.getElementById(`trial${trialNum}CurFloor`).textContent = "" + (curFloor + 1);
+                document.getElementById(`trial${trialNum}CurFloorCompleted`).textContent = trial[curFloor].completed;
+            }
+            if (curFloor > 0) {
+                document.getElementById(`trial${trialNum}LastFloor`).textContent = curFloor;
+                document.getElementById(`trial${trialNum}LastFloorCompleted`).textContent = trial[curFloor - 1].completed;
+            }
+    };
+
     this.updateSoulstones = function() {
         for (const stat of statList) {
             if (stats[stat].soulstone) {
@@ -1008,6 +1102,7 @@ function View() {
                 trainingDiv.textContent = trainingLimits;
             }
         }
+        if (getBuffLevel("Imbuement") > 0 || getBuffLevel("Imbuement3") > 0) document.getElementById("maxTraining").style.display = "";
     };
 
     // when you mouseover Story
@@ -1066,6 +1161,24 @@ function View() {
         options.theme = document.getElementById("themeInput").value;
         document.getElementById("theBody").className = `t-${options.theme}`;
     };
+
+    this.createTravelMenu = function() {
+        let travelMenu = document.getElementById("travelMenu");
+        travelMenu.innerHTML = "";
+        townNames.forEach((town, index) => {
+            if (townsUnlocked.includes(index))
+                travelMenu.innerHTML += `<div id='travelButton`+index+`' class='button showthat control' onClick='view.showTown(`+index+`)'>`+town+`</div><br>`;
+        });
+    }
+
+    this.adjustDarkRitualText = function() {
+        let DRdesc = document.getElementById("DRText");
+        DRdesc.innerHTML = `Actions are:<br>`;
+        townsUnlocked.forEach(townNum => {
+            DRdesc.innerHTML += DarkRitualDescription[townNum];
+        });
+        if(getBuffLevel("Ritual") > 200) DRdesc.innerHTML += DarkRitualDescription[9];
+    }
 }
 
 function unlockGlobalStory(num) {
@@ -1143,6 +1256,7 @@ function adjustActionListSize(amt) {
         curActionsDiv.style.maxHeight = `${Math.min(Math.max(parseInt(curActionsDiv.style.maxHeight) + amt, 457), 1957)}px`;
         nextActionsDiv.style.maxHeight = `${Math.min(Math.max(parseInt(nextActionsDiv.style.maxHeight) + amt, 457), 1957)}px`;
     }
+    setScreenSize();
     saveUISettings();
 }
 
@@ -1152,3 +1266,46 @@ function updateBuffCaps() {
         buffCaps[buff] = parseInt(document.getElementById(`buff${buff}Cap`).value);
     }
 }
+
+function setScreenSize() {
+    screenSize = document.body.scrollHeight;
+}
+
+//Attempts at getting divs to stay on screen, but can't figure it out still
+function clampDivs() {
+    let tooltips = Array.from(document.getElementsByClassName("showthis"));
+    let test = document.getElementById("radarStats");
+    console.log(screenSize);
+    tooltips.forEach(tooltip => {
+        var offsets = cumulativeOffset(tooltip);
+        if (offsets.top != 0) console.log("Top: " + offsets.top + ". Height: " + tooltip.clientHeight + ". Total: " + (offsets.top + tooltip.clientHeight) + ". Screensize: " + screenSize);
+        if (offsets.top < 0) console.log("Offscreen - top");
+        if (offsets.top + tooltip.clientHeight > screenSize) tooltip.style.top = -100 + 'px';
+    });
+}
+
+function cumulativeOffset(element) {
+    var top = 0, bottom = 0;
+    do {
+        top += element.offsetTop  || 0;
+        bottom += element.offsetBottom || 0;
+        element = element.offsetParent;
+    } while(element);
+
+    return {
+        top: top,
+        bottom: bottom
+    };
+}
+
+const DarkRitualDescription = [
+    `10% faster in Beginnersville per ritual from 1-20<br>`,
+    `5% faster in the Forest Path per ritual from 21-40<br>`,
+    `2.5% faster in Merchanton per ritual from 41-60<br>`,
+    `1.5% faster in Mt. Olympus per ritual from 61-80<br>`,
+    `1.0% faster in Valhalla per ritual from 81-100<br>`,
+    `0.5% faster in Startington per ritual from 101-150<br>`,
+    `0.5% faster in Jungle Path per ritual from 151-200<br>`,
+    `0.5% faster in Commerceville per ritual from 201-250<br>`,
+    `0.5% faster in Valley of Olympus per ritual from 251-300<br>`,
+    `0.1% faster globally per ritual from 301-666`];
