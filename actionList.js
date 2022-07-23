@@ -2046,7 +2046,7 @@ Action.DarkMagic = new Action("Dark Magic", {
     },
     skills: {
         Dark() {
-            return Math.floor(100 * Math.pow(1.01, getSkillLevel("Ritual")));
+            return Math.floor(100 * Math.pow(1.01, getBuffLevel("Ritual")));
         }
     },
     manaCost() {
