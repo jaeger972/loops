@@ -1158,16 +1158,12 @@ function finishDungeon(dungeonNum, floorNum) {
         return false;
     }
     floor.completed++;
-    const rand = Math.random();
-    if (rand <= floor.ssChance) {
-        const statToAdd = statList[Math.floor(Math.random() * statList.length)];
-        floor.lastStat = statToAdd;
-        stats[statToAdd].soulstone = stats[statToAdd].soulstone ? (stats[statToAdd].soulstone + Math.floor(Math.pow(10, dungeonNum) * getSkillBonus("Divine"))) : 1;
-        floor.ssChance *= 0.98;
-        view.updateSoulstones();
-        return true;
-    }
-    return false;
+    const statToAdd = statList[Math.floor(Math.random() * statList.length)];
+    floor.lastStat = statToAdd;
+    stats[statToAdd].soulstone = stats[statToAdd].soulstone ? (stats[statToAdd].soulstone + Math.floor(Math.pow(10, dungeonNum) * getSkillBonus("Divine"))) : 1;
+    //floor.ssChance *= 0.98;
+    view.updateSoulstones();
+    return true;
 }
 
 Action.BuySupplies = new Action("Buy Supplies", {
@@ -2043,7 +2039,7 @@ Action.DarkMagic = new Action("Dark Magic", {
         Con: 0.2,
         Int: 0.5,
         Soul: 0.3
-    },
+    }, 
     skills: {
         Dark() {
             return Math.floor(100 * Math.pow(1.01, getBuffLevel("Ritual")));
