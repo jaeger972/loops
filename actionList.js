@@ -2046,7 +2046,7 @@ Action.DarkMagic = new Action("Dark Magic", {
     },
     skills: {
         Dark() {
-            return Math.floor(100 * (1 + getBuffLevel("Ritual") / 100));
+            return Math.floor(100 * Math.pow(1.01, getSkillLevel("Ritual")));
         }
     },
     manaCost() {
@@ -5244,12 +5244,7 @@ Action.Escape = new Action("Escape", {
         return 1;
     },
     canStart() {
-        if (escapeStarted) return true;
-        else if (effectiveTime < 60) {
-            escapeStarted = true;
-            return true;
-        }
-        else return false;
+        return true;
     },
     manaCost() {
         return 50000;
