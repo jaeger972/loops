@@ -128,7 +128,7 @@ let loadoutnames;
 const skillList = ["Combat", "Magic", "Practical", "Alchemy", "Crafting", "Dark", "Chronomancy", "Pyromancy", "Restoration", "Spatiomancy", "Mercantilism", "Divine", "Commune", "Wunderkind", "Gluttony", "Thievery", "Leadership"];
 const skills = {};
 const buffList = ["Ritual", "Imbuement", "Imbuement2", "Feast", "Aspirant", "Heroism", "Imbuement3"];
-const dungeonFloors = [6, 9, 20];
+const dungeonFloors = [6, 9, 100];
 const trialFloors = [50, 100, 7, 1000, 25];
 const buffHardCaps = {
     Ritual: 666,
@@ -136,7 +136,7 @@ const buffHardCaps = {
     Imbuement2: 500,
     Imbuement3: 7,
     Feast: 100,
-    Aspirant: 20,
+    Aspirant: 100,
     Heroism: 50
 };
 const buffCaps = {
@@ -145,7 +145,7 @@ const buffCaps = {
     Imbuement2: 500,
     Imbuement3: 7,
     Feast: 100,
-    Aspirant: 20,
+    Aspirant: 100,
     Heroism: 50
 };
 const buffs = {};

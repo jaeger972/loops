@@ -4950,7 +4950,7 @@ Action.DeadTrial = new TrialAction("Dead Trial", 4, {
     },
     floorReward() {
         //Rewards given per floor
-        addResource("zombie", 1);
+        addResource("zombie", this.currentFloor());
     },
     canStart() {
         return this.currentFloor() < trialFloors[this.trialNum];

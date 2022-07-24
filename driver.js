@@ -66,12 +66,6 @@ function tick() {
         effectiveTime += 1 / baseManaPerSecond / getSpeedMult();
 
         actions.tick();
-        for (const dungeon of dungeons) {
-            for (const level of dungeon) {
-                const chance = level.ssChance;
-                if (chance < 1) level.ssChance = Math.min(chance + 0.0000001, 1);
-            }
-        }
 
         if (shouldRestart || timer >= timeNeeded) {
             prepareRestart();
