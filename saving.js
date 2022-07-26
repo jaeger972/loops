@@ -590,7 +590,7 @@ function save() {
     for (const town of towns) {
         for (const action of town.totalActionList) {
             if (action.type === "progress") {
-                toSave[`exp${action.varName}`] = town[`exp${action.varName}`];
+                toSave[`exp${action.varName}`] = Math.min(town[`exp${action.varName}`], 100000);
             } else if (action.type === "multipart") {
                 toSave[`total${action.varName}`] = town[`total${action.varName}`];
             } else if (action.type === "limited") {

@@ -11,13 +11,13 @@ function Town(index) {
 
     this.expFromLevel = function(level) {
         //return level * (level + 1) * 50;
-        return 505000 / 100 * level;
+        return 100000 / 100 * level;
     };
 
     this.getLevel = function(varName) {
         if (varName === "Survey") varName = varName + "Z" + this.index;
         //return Math.floor((Math.sqrt(8 * this[`exp${varName}`] / 100 + 1) - 1) / 2);
-        return Math.floor(this[`exp${varName}`] / 505000 * 100);
+        return Math.floor(this[`exp${varName}`] / 100000 * 100);
     };
 
     this.restart = function() {
@@ -31,16 +31,16 @@ function Town(index) {
 
     this.finishProgress = function(varName, expGain) {
         // return if capped, for performance
-        if (this[`exp${varName}`] === 505000) {
+        if (this[`exp${varName}`] === 100000) {
             if (options.pauseOnComplete) pauseGame();
             else return;
         }
 
-        expGain *= 10;
+        //expGain *= 10;
 
         const prevLevel = this.getLevel(varName);
-        if (this[`exp${varName}`] + expGain > 505000) {
-            this[`exp${varName}`] = 505000;
+        if (this[`exp${varName}`] + expGain > 100000) {
+            this[`exp${varName}`] = 100000;
         } else {
             this[`exp${varName}`] += expGain;
         }
