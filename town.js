@@ -15,7 +15,8 @@ function Town(index) {
 
     this.getLevel = function(varName) {
         if (varName === "Survey") varName = varName + "Z" + this.index;
-        return Math.floor((Math.sqrt(8 * this[`exp${varName}`] / 100 + 1) - 1) / 2);
+        //return Math.floor((Math.sqrt(8 * this[`exp${varName}`] / 100 + 1) - 1) / 2);
+        return Math.floor(this[`exp${varName}`] / 505000);
     };
 
     this.restart = function() {
@@ -34,11 +35,13 @@ function Town(index) {
             else return;
         }
 
+        expGain *= 10;
+
         const prevLevel = this.getLevel(varName);
         if (this[`exp${varName}`] + expGain > 505000) {
             this[`exp${varName}`] = 505000;
         } else {
-            this[`exp${varName}`] += expGain * 10;
+            this[`exp${varName}`] += expGain;
         }
         const level = this.getLevel(varName);
         if (level !== prevLevel) {
