@@ -2042,7 +2042,7 @@ Action.DarkMagic = new Action("Dark Magic", {
     }, 
     skills: {
         Dark() {
-            return Math.floor(100 * Math.pow(1.01, getBuffLevel("Ritual")));
+            return Math.floor(100 * Math.pow(1.01, getBuffLevel("Ritual")) * Math.pow(1.01, getSkillLevel("Commune")));
         }
     },
     manaCost() {
@@ -4948,7 +4948,7 @@ Action.DeadTrial = new TrialAction("Dead Trial", 4, {
         //Determines what skills give progress to the trial
         return getZombieStrength();
     },
-    floorReward() {
+    floorReward() { 
         //Rewards given per floor
         addResource("zombie", this.currentFloor());
     },
