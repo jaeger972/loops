@@ -3013,7 +3013,7 @@ Action.BuyPickaxe = new Action("Buy Pickaxe", {
 
 Action.HeroesTrial = new TrialAction("Heroes Trial", 0, {
     type: "multipart",
-    expMult: 0.2,
+    expMult: 1,
     townNum: 2,
     varName: "HTrial",
     stats: {
@@ -4929,7 +4929,7 @@ Action.PurchaseSupplies = new Action("Purchase Supplies", {
 
 Action.DeadTrial = new TrialAction("Dead Trial", 4, {
     type: "multipart",
-    expMult: 0.25,
+    expMult: 0.75,
     townNum: 5,
     stats: {
         Cha: 0.25,
@@ -5731,7 +5731,7 @@ Action.PurchaseKey = new Action("Purchase Key", {
 
 Action.SecretTrial = new TrialAction("Secret Trial", 3, {
     type: "multipart",
-    expMult: 0,
+    expMult: 1,
     townNum: 7,
     varName: "STrial",
     stats: {
@@ -5903,7 +5903,7 @@ Action.BuildTower = new Action("Build Tower", {
 
 Action.GodsTrial = new TrialAction("Gods Trial", 1, {
     type: "multipart",
-    expMult: 0.2,
+    expMult: 1,
     townNum: 8,
     varName: "GTrial",
     stats: {
@@ -5952,7 +5952,7 @@ Action.GodsTrial = new TrialAction("Gods Trial", 1, {
 
 Action.ChallengeGods = new TrialAction("Challenge Gods", 2, {
     type: "multipart",
-    expMult: 0.5,
+    expMult: 2,
     townNum: 8,
     varName: "GFight",
     stats: {
