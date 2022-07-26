@@ -38,7 +38,7 @@ function Town(index) {
         if (this[`exp${varName}`] + expGain > 505000) {
             this[`exp${varName}`] = 505000;
         } else {
-            this[`exp${varName}`] += expGain;
+            this[`exp${varName}`] += expGain * 10;
         }
         const level = this.getLevel(varName);
         if (level !== prevLevel) {
