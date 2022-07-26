@@ -10,7 +10,8 @@ function Town(index) {
     };
 
     this.expFromLevel = function(level) {
-        return level * (level + 1) * 50;
+        //return level * (level + 1) * 50;
+        return 505000 / 100 * level;
     };
 
     this.getLevel = function(varName) {
