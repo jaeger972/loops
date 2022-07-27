@@ -920,6 +920,9 @@ function View() {
             catch{
                 document.getElementById(`expGain${action.varName}${skill}`).textContent = ` ${action.skills[skill].toFixed(0)}`;
             }
+            finally {
+                document.getElementById(`expGain${action.varName}${skill}`).textContent = ` ${action.skills[skill]}`;
+            }
         }
     };
     this.adjustExpGains = function() {
