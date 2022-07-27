@@ -918,9 +918,6 @@ function View() {
                 document.getElementById(`expGain${action.varName}${skill}`).textContent = ` ${action.skills[skill]().toFixed(0)}`;
             }
             catch{
-                document.getElementById(`expGain${action.varName}${skill}`).textContent = ` ${action.skills[skill].toFixed(0)}`;
-            }
-            finally {
                 document.getElementById(`expGain${action.varName}${skill}`).textContent = ` ${action.skills[skill]}`;
             }
         }
