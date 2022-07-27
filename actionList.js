@@ -1339,7 +1339,7 @@ Action.OpenRift = new Action("Open Rift", {
         Soul: 0.7
     },
     skills: {
-        Dark: 1000
+        Dark: 1000 * getSkillBonus("Magic")
     },
     allowed() {
         return 1;
@@ -1674,7 +1674,7 @@ Action.PracticalMagic = new Action("Practical Magic", {
         Int: 0.5
     },
     skills: {
-        Practical: 100
+        Practical: 100 * getSkillBonus("Magic")
     },
     manaCost() {
         return Math.ceil(4000 * (1 - towns[1].getLevel("Hermit") * 0.005));
@@ -1715,7 +1715,7 @@ Action.LearnAlchemy = new Action("Learn Alchemy", {
     },
     skills: {
         Magic: 50,
-        Alchemy: 50
+        Alchemy: 50 * getSkillBonus("Magic")
     },
     canStart() {
         return resources.herbs >= 10;
@@ -1760,7 +1760,7 @@ Action.BrewPotions = new Action("Brew Potions", {
     },
     skills: {
         Magic: 50,
-        Alchemy: 25
+        Alchemy: 25 * getSkillBonus("Magic")
     },
     canStart() {
         return resources.herbs >= 10 && resources.reputation >= 5;
@@ -2042,7 +2042,7 @@ Action.DarkMagic = new Action("Dark Magic", {
     }, 
     skills: {
         Dark() {
-            return Math.floor(100 * Math.pow(1.01, getBuffLevel("Ritual")) * Math.pow(1.01, getSkillLevel("Commune")));
+            return Math.floor(100 * Math.pow(1.01, getBuffLevel("Ritual")) * Math.pow(1.01, getSkillLevel("Commune")) * getSkillBonus("Magic"));
         }
     },
     manaCost() {
@@ -3029,8 +3029,8 @@ Action.HeroesTrial = new TrialAction("Heroes Trial", 0, {
     },
     skills: {
         Combat: 500,
-        Pyromancy: 100,
-        Restoration: 100
+        Pyromancy: 100 * getSkillBonus("Magic"),
+        Restoration: 100 * getSkillBonus("Magic")
     },
     loopStats: ["Dex", "Str", "Con", "Spd", "Per", "Cha", "Int", "Luck", "Soul"],
     affectedBy: ["Team"],
@@ -3290,7 +3290,7 @@ Action.Chronomancy = new Action("Chronomancy", {
         Int: 0.6
     },
     skills: {
-        Chronomancy: 100
+        Chronomancy: 100 * getSkillBonus("Magic")
     },
     manaCost() {
         return Math.ceil(10000 * (1 - towns[3].getLevel("Runes") * 0.005));
@@ -3323,7 +3323,7 @@ Action.LoopingPotion = new Action("Looping Potion", {
         Soul: 0.1,
     },
     skills: {
-        Alchemy: 100
+        Alchemy: 100 * getSkillBonus("Magic")
     },
     canStart() {
         return resources.herbs >= 400;
@@ -3368,7 +3368,7 @@ Action.Pyromancy = new Action("Pyromancy", {
         Soul: 0.1
     },
     skills: {
-        Pyromancy: 100
+        Pyromancy: 100 * getSkillBonus("Magic")
     },
     manaCost() {
         return Math.ceil(14000 * (1 - towns[3].getLevel("Runes") * 0.005));
@@ -4294,7 +4294,7 @@ Action.Restoration = new Action("Restoration", {
     },
     affectedBy: ["Wizard College"],
     skills: {
-        Restoration: 100
+        Restoration: 100 * getSkillBonus("Magic")
     },
     manaCost() {
         return 15000 / getWizCollegeRank().bonus;
@@ -4322,7 +4322,7 @@ Action.Spatiomancy = new Action("Spatiomancy", {
     },
     affectedBy: ["Wizard College"],
     skills: {
-        Spatiomancy: 100
+        Spatiomancy: 100 * getSkillBonus("Magic")
     },
     manaCost() {
         return 20000 / getWizCollegeRank().bonus;
@@ -4788,7 +4788,7 @@ Action.RaiseZombie = new Action("Raise Zombie", {
         Soul: 0.3
     },
     skills: {
-        Dark: 100
+        Dark: 100 * getSkillBonus("Magic")
     },
     canStart() {
         return resources.blood >= 1;
@@ -4820,7 +4820,7 @@ Action.DarkSacrifice = new Action("Dark Sacrifice", {
         Soul: 0.8
     },
     skills: {
-        Commune: 100
+        Commune: 100 * getSkillBonus("Magic")
     },
     canStart() {
         return resources.blood >= 1;
@@ -5129,7 +5129,7 @@ Action.RescueSurvivors = new MultipartAction("Rescue Survivors", {
         Spd: 0.2
     },
     skills: {
-        Restoration: 25
+        Restoration: 25 * getSkillBonus("Magic")
     },
     loopStats: ["Per", "Spd", "Cha"],
     manaCost() {
@@ -5171,7 +5171,7 @@ Action.PrepareBuffet = new Action("Prepare Buffet", {
         Int: 0.6
     },
     skills: {
-        Alchemy: 25,
+        Alchemy: 25 * getSkillBonus("Magic"),
         Gluttony: 5
     },
     canStart() {
@@ -5266,7 +5266,7 @@ Action.OpenPortal = new Action("Open Portal", {
         Soul: 0.7
     },
     skills: {
-        Restoration: 2500
+        Restoration: 2500 * getSkillBonus("Magic")
     },
     allowed() {
         return 1;
@@ -5393,7 +5393,7 @@ Action.ThievesGuild = new MultipartAction("Thieves Guild", {
     },
     skills: {
         Thievery: 50,
-        Practical: 50
+        Practical: 50 * getSkillBonus("Magic")
     },
     loopStats: ["Per", "Dex", "Spd"],
     manaCost() {
@@ -5919,8 +5919,8 @@ Action.GodsTrial = new TrialAction("Gods Trial", 1, {
     },
     skills: {
         Combat: 250,
-        Pyromancy: 50,
-        Restoration: 50
+        Pyromancy: 50 * getSkillBonus("Magic"),
+        Restoration: 50 * getSkillBonus("Magic")
     },
     loopStats: ["Dex", "Str", "Con", "Spd", "Per", "Cha", "Int", "Luck", "Soul"],
     affectedBy: ["Team"],
