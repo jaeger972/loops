@@ -927,7 +927,7 @@ Action.MageLessons = new Action("Mage Lessons", {
     },
     skills: {
         Magic() {
-	          return 100 * Math.pow(1.01, getSkillLevel("Alchemy"));
+	          return Math.floor(100 * Math.pow(1.01, getSkillLevel("Alchemy")));
         }
     },
     manaCost() {
