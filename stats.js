@@ -99,7 +99,7 @@ function getSkillBonus(skill) {
     else console.log("Skill not found:" + skill);
 
     if(change == "increase") return 1 + Math.pow(getSkillLevel(skill) , 0.7) / 100;
-    else if (change == "decrease") return 1 / (1 + getSkillLevel(skill) / 100);
+    else if (change == "decrease") return Math.pow(0.99, getSkillLevel(skill)); //1 / (1 + getSkillLevel(skill) / 100);
     else return 0;
 }
 
